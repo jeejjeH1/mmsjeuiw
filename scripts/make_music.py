@@ -1,14 +1,17 @@
-"""Synthesises the showreel soundtrack (120 BPM, F minor) so every hit lands on a cut.
+"""Synthesises the soundtrack (120 BPM, F minor) so every hit lands on a cut.
 
 Timeline (30 fps video, 1 beat = 15 frames = 0.5 s, 1 bar = 2 s):
-  0-4s    ambient intro, kinetic-word hits at 2.0/2.5/3.0/3.5s
+  0-4s    hook + kinetic-word hits at 2.0/2.5/3.0/3.5s
   4s      title impact, half-time build
-  8s      drop  (gallery wall + flash teaser, snare roll into 14s)
-  14s     drop  (chapters 1-5)
-  40-44s  breakdown + riser
-  44s     drop  (chapters 6-8)
-  62s     finale grid
-  70s     outro
+  8s      drop: Rally
+  13-16s  keyword blips (reading the project)
+  16s     Discord
+  22-24s  break + riser ("so I started creating")
+  24s     drop: first came art
+  30-62s  eight videos, whoosh on every cut
+  62-68s  breakdown (the lesson)
+  68s     drop: finale grid
+  76s     call to action / outro, logo sting at 81s
 """
 import numpy as np
 from scipy.signal import butter, sosfilt, fftconvolve
@@ -18,7 +21,7 @@ SR = 48000
 BPM = 120
 BEAT = 60 / BPM
 BAR = BEAT * 4
-DUR = 78.0
+DUR = 86.0
 N = int(SR * DUR)
 rng = np.random.default_rng(7)
 
@@ -184,8 +187,7 @@ ROOTS = [41, 37, 44, 39]  # F, Db, Ab, Eb  (bass octave)
 CHORDS = [(53, 56, 60, 65), (49, 53, 56, 61), (56, 60, 63, 68), (51, 55, 58, 63)]
 ARP_ORDER = [0, 1, 2, 3, 2, 1, 3, 2]
 
-full = [(8, 40), (44, 70)]          # sections with full drums (seconds)
-breakdown = (40, 44)
+full = [(8, 22), (24, 62), (68, 76)]  # sections with full drums (seconds)
 
 
 def in_ranges(t, ranges):
@@ -211,10 +213,10 @@ for b in range(bars):
     ci = b % 4
     # ---- pad everywhere (brighter in drops) ----
     cutoff = 700 if t0 < 8 else (2600 if in_ranges(t0, full) else 1500)
-    if t0 >= 70:
+    if t0 >= 76:
         cutoff = 1200
     padg = 0.4 if t0 >= 4 else 0.4 * (t0 + BAR) / 4
-    if t0 < 74:
+    if t0 < 84:
         pad = supersaw(CHORDS[ci], BAR + 0.3, cutoff)
         add(pad, t0, padg, -0.35, rev=0.5, music=True)
         add(pad, t0 + 0.012, padg, 0.35, music=True)
@@ -234,23 +236,23 @@ for b in range(bars):
         if isfull and s % 2 == 1:
             add(hat(), t, 0.14, -0.3)
         # ---- bass (8ths, off-beat pumping) ----
-        if (isfull or 62 <= t < 70) and s % 2 == 0:
+        if isfull and s % 2 == 0:
             n = int(SR * BEAT / 2)
             m = ROOTS[ci] + (12 if s % 4 == 2 else 0)
             x = saw(midi(m), n) + saw(midi(m), n, 0.004)
-            x = lp(x, 420 if t < 62 else 650) * np.exp(-np.arange(n) / SR * 6)
+            x = lp(x, 420 if t < 68 else 650) * np.exp(-np.arange(n) / SR * 6)
             sub = np.sin(2 * np.pi * midi(ROOTS[ci] - 12) * np.arange(n) / SR) * 0.8
             add(x * 0.7 + sub * 0.3, t, 0.4, music=True)
         # ---- arp ----
-        arp_on = (4 <= t < 74)
+        arp_on = (4 <= t < 84)
         if arp_on:
             notes = CHORDS[ci]
             m = notes[ARP_ORDER[s % 8] % 4] + (12 if (s // 8) % 2 else 0)
-            if t >= 62 and t < 70:
+            if 68 <= t < 76:
                 m += 12
             g = 0.32 if t >= 8 else 0.24
-            if t >= 70:
-                g *= max(0, 1 - (t - 70) / 4)
+            if t >= 78:
+                g *= max(0, 1 - (t - 78) / 6)
             add(pluck(m), t, g, 0.4 if s % 2 else -0.4, rev=0.4, music=True)
 
 # ---------- kinetic intro hits ----------
@@ -260,9 +262,9 @@ for t in (2.0, 2.5, 3.0, 3.5):
     add(blip(880 if t != 3.5 else 1320), t, 0.25)
 add(riser(2.0), 2.0, 0.35)
 
-# ---------- teaser blips (flash cuts every 7.5 frames from 11s to 14s) ----------
+# ---------- keyword blips (every 7.5 frames from 13s to 16s) ----------
 for k in range(12):
-    t = 11 + k * 0.25
+    t = 13 + k * 0.25
     add(blip(660 * 2 ** ((k % 6) / 12)), t, 0.22, (-1) ** k * 0.5)
 
 # ---------- snare rolls ----------
@@ -275,34 +277,36 @@ def roll(start, end, gain):
         steps += 1
         t += BEAT / 4 if p < 0.5 else BEAT / 8
 roll(7.0, 8.0, 0.35)
-roll(12.0, 14.0, 0.35)
-roll(42.0, 44.0, 0.35)
-roll(60.5, 62.0, 0.3)
+roll(22.0, 24.0, 0.35)
+roll(66.5, 68.0, 0.3)
 
 # ---------- impacts / risers ----------
-for t in (4.0, 8.0, 14.0, 44.0, 62.0, 70.0):
+for t in (4.0, 8.0, 24.0, 68.0, 76.0):
     add(boom(), t, 0.55)
     add(crash(), t, 0.45, rev=0.5)
     add(kick(True), t, 0.6)
-for start, end in ((5.0, 8.0), (11.0, 14.0), (40.0, 44.0), (59.0, 62.0)):
+for start, end in ((5.0, 8.0), (20.0, 24.0), (64.0, 68.0)):
     add(riser(end - start), start, 0.4)
 # reverse cymbal into the title + drops
-for t in (4.0, 14.0, 44.0):
+for t in (4.0, 24.0, 68.0):
     rc = crash(1.5)[::-1]
     add(rc, t - 1.5, 0.35, rev=0.2)
 
-# ---------- whooshes on chapter cuts (frames 420 + 180k) ----------
-for f in (600, 780, 960, 1140, 1500, 1680):
+# ---------- whooshes on scene / video cuts ----------
+for f in (360, 480, 900, 1020, 1140, 1260, 1380, 1500, 1620, 1740, 1860):
     t = f / 30
     add(whoosh(0.9), t - 0.6, 0.45, rev=0.3)
     add(crash(1.2), t, 0.15)
     add(blip(1760, 0.05), t, 0.12)
-add(whoosh(0.8), 11 - 0.5, 0.4)
-add(whoosh(1.2), 70 - 0.8, 0.4)
+add(whoosh(1.2), 76 - 0.8, 0.4)
+# soft sting for the logo reveal
+add(boom(), 81.0, 0.3)
+add(crash(2.5), 81.0, 0.25, rev=0.6)
 
 # outro final chord sting
 for m in CHORDS[0]:
-    add(supersaw([m, m + 12], 6, 1800), 70.0, 0.12, rev=0.8)
+    add(supersaw([m, m + 12], 6, 1800), 76.0, 0.12, rev=0.8)
+    add(supersaw([m, m + 12], 5, 1400), 81.0, 0.1, rev=0.9)
 
 # ---------- mix ----------
 L += ML * duck

@@ -27,32 +27,41 @@ export const FONT = {
 
 export type Work = {
   src: string;
+  trim: number; // first source frame shown in the 4s chapter
   title: string;
   subtitle: string;
   tags: string[];
 };
 
 export const WORKS: Work[] = [
-  {src: 'w1', title: 'GenVM', subtitle: 'Beyond the boolean', tags: ['Kinetic Type', 'UI Motion', 'Glitch FX']},
-  {src: 'w2', title: 'Optimistic Democracy', subtitle: 'Decentralizing AI decisions', tags: ['Typography', 'Brand Motion']},
-  {src: 'w3', title: 'Reality Isn’t Clean', subtitle: 'Validators & consensus', tags: ['Explainer', 'Glitch FX', 'UI']},
-  {src: 'w4', title: 'Smart Contracts', subtitle: 'Non-deterministic & smarter', tags: ['2D Animation', 'Character']},
-  {src: 'w5', title: 'AI Agents', subtitle: 'They talk to each other', tags: ['Minimal', 'Line Motion']},
-  {src: 'w6', title: 'The Wrong Decision', subtitle: 'How validators fix it', tags: ['UI Motion', 'Typewriter']},
-  {src: 'w7', title: 'Multi‑Layer Security', subtitle: 'GenLayer explained', tags: ['Character', 'Infographic']},
-  {src: 'w8', title: 'Different Answers', subtitle: 'One consensus', tags: ['Brand Motion', 'Pastel']},
+  {src: 'w1', trim: 0, title: 'GenVM', subtitle: 'Beyond the boolean', tags: ['Kinetic Type', 'UI Motion', 'Glitch FX']},
+  {src: 'w2', trim: 40, title: 'Optimistic Democracy', subtitle: 'Decentralizing AI decisions', tags: ['Typography', 'Brand Motion']},
+  {src: 'w3', trim: 0, title: 'Reality Isn’t Clean', subtitle: 'Validators & consensus', tags: ['Explainer', 'Glitch FX', 'UI']},
+  {src: 'w4', trim: 50, title: 'Smart Contracts', subtitle: 'Non-deterministic & smarter', tags: ['2D Animation', 'Character']},
+  {src: 'w5', trim: 0, title: 'AI Agents', subtitle: 'They talk to each other', tags: ['Minimal', 'Line Motion']},
+  {src: 'w6', trim: 45, title: 'The Wrong Decision', subtitle: 'How validators fix it', tags: ['UI Motion', 'Typewriter']},
+  {src: 'w7', trim: 50, title: 'Multi‑Layer Security', subtitle: 'GenLayer explained', tags: ['Character', 'Infographic']},
+  {src: 'w8', trim: 40, title: 'Different Answers', subtitle: 'One consensus', tags: ['Brand Motion', 'Pastel']},
 ];
 
-// Timeline (frames)
+export const NAME = 'MASTER';
+
+// Timeline (frames) — every boundary sits on a beat of the soundtrack
 export const T = {
-  intro: 0,
-  wall: 240,
-  flash: 330,
-  chapters: 420,
-  chapterLen: 180,
-  finale: 1860,
-  outro: 2100,
-  end: 2340,
+  hook: 0,
+  kinetic: 60,
+  title: 120,
+  rally: 240,
+  read: 360,
+  discord: 480,
+  create: 660,
+  art: 720,
+  works: 900,
+  workLen: 120,
+  lesson: 1860,
+  finale: 2040,
+  cta: 2280,
+  end: 2580,
 };
 
 export const pad2 = (n: number) => String(n).padStart(2, '0');

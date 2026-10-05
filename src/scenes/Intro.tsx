@@ -1,6 +1,7 @@
 import React from 'react';
 import {AbsoluteFill, interpolate, Sequence, useCurrentFrame, Easing} from 'remotion';
-import {C, FONT, H, W} from '../theme';
+import {C, FONT, H, NAME, W} from '../theme';
+import {Logo} from '../Logo';
 import {
   Backdrop,
   beatPulse,
@@ -17,14 +18,16 @@ import {
   RiseText,
 } from '../fx';
 
-/* ---------- 0-60: boot line ---------- */
+/* ---------- 0-60: hook ---------- */
+const HOOK = 'Everyone starts somewhere.';
 const Boot: React.FC = () => {
   const f = useCurrentFrame();
   const lineW = ramp(f, 4, 40, 0, 1500);
+  // the line sits under the typed hook
   const open = ramp(f, 52, 60, 2, H, Easing.in(Easing.cubic));
   const pct = Math.round(ramp(f, 4, 52, 0, 100, Easing.inOut(Easing.quad)));
   const flick = f > 44 && f < 52 && f % 3 === 0 ? 0.3 : 1;
-  const logs = ['sys.boot ........ ok', 'render.engine ... ok', 'palette #ff87ff / #dc00ff', 'collection ready_'];
+  const logs = ['user ........ master', 'platform .... rally', 'project ..... genlayer', 'status ...... curious_'];
   return (
     <AbsoluteFill>
       <Backdrop intensity={ramp(f, 0, 50, 0, 0.6)} />
@@ -55,12 +58,30 @@ const Boot: React.FC = () => {
           opacity: flick,
         }}
       />
-      <Mono
-        size={22}
-        color={C.white}
-        style={{position: 'absolute', width: W, textAlign: 'center', top: H / 2 + 40, opacity: ramp(f, 6, 16) * (1 - ramp(f, 50, 54))}}
+      <div
+        style={{
+          position: 'absolute',
+          width: W,
+          textAlign: 'center',
+          top: H / 2 - 120,
+          fontFamily: FONT.display,
+          fontWeight: 700,
+          fontSize: 76,
+          color: C.white,
+          textShadow: `0 0 30px ${C.magenta}`,
+          opacity: 1 - ramp(f, 50, 54),
+          whiteSpace: 'pre',
+        }}
       >
-        loading the collection — {String(pct).padStart(3, '0')}%
+        {HOOK.slice(0, Math.floor(ramp(f, 4, 34, 0, HOOK.length, Easing.linear)))}
+        <span style={{color: C.green, opacity: f % 10 < 5 ? 1 : 0}}>_</span>
+      </div>
+      <Mono
+        size={20}
+        color={C.pink}
+        style={{position: 'absolute', width: W, textAlign: 'center', top: H / 2 + 40, opacity: ramp(f, 30, 38) * (1 - ramp(f, 50, 54))}}
+      >
+        a genlayer story · {String(pct).padStart(3, '0')}%
       </Mono>
       <Brackets x={W / 2 - 820} y={H / 2 - 120} w={1640} h={240} opacity={ramp(f, 10, 24) * (1 - ramp(f, 50, 54))} color={C.pink} />
     </AbsoluteFill>
@@ -69,10 +90,10 @@ const Boot: React.FC = () => {
 
 /* ---------- 60-120: kinetic words ---------- */
 const WORDS = [
-  {t: 'MOTION', bg: C.bg, fg: C.pink, mode: 'glow'},
-  {t: 'DESIGN', bg: C.magenta, fg: C.bg, mode: 'fill'},
-  {t: 'STORY', bg: C.bg, fg: C.green, mode: 'stroke'},
-  {t: 'IMPACT', bg: C.pink, fg: C.deep, mode: 'fill'},
+  {t: 'RALLY', bg: C.bg, fg: C.pink, mode: 'glow'},
+  {t: 'READ', bg: C.magenta, fg: C.bg, mode: 'fill'},
+  {t: 'DISCORD', bg: C.bg, fg: C.green, mode: 'stroke'},
+  {t: 'CREATE', bg: C.pink, fg: C.deep, mode: 'fill'},
 ] as const;
 
 const Kinetic: React.FC = () => {
@@ -86,7 +107,7 @@ const Kinetic: React.FC = () => {
   const big: React.CSSProperties = {
     fontFamily: FONT.display,
     fontWeight: 900,
-    fontSize: 300,
+    fontSize: 250,
     letterSpacing: `${ls}em`,
     lineHeight: 1,
     color: w.mode === 'stroke' ? 'transparent' : w.fg,
@@ -125,7 +146,7 @@ const Kinetic: React.FC = () => {
         {`0${i + 1} / 04`}
       </Mono>
       <Mono size={20} color={w.bg === C.bg ? C.pink : C.bg} style={{position: 'absolute', right: 90, bottom: 80}}>
-        motion collection
+        step by step
       </Mono>
     </AbsoluteFill>
   );
@@ -181,16 +202,35 @@ const Title: React.FC = () => {
             opacity: 1 - ramp(f, 112, 120),
           }}
         >
-          <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: -40}}>
-            <div style={{display: 'flex', alignItems: 'center', gap: 16, marginBottom: 26, opacity: ramp(f, 40, 50)}}>
+          <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: -10}}>
+            <Logo size={190} reveal={ramp(f, 0, 22, 0, 1, Easing.out(Easing.cubic))} glow={0.6 + pulse * 0.4} />
+            <RiseText
+              text="MY GENLAYER"
+              start={10}
+              stagger={2}
+              style={{fontFamily: FONT.display, fontWeight: 900, fontSize: 150, lineHeight: 1, letterSpacing: '0.01em', marginTop: 34}}
+              letterStyle={(i) => ({
+                color: gradAt(i / 10),
+                textShadow: `0 0 50px ${C.magenta}99`,
+              })}
+            />
+            <RiseText
+              text="STORY"
+              start={26}
+              stagger={3}
+              style={{fontFamily: FONT.display, fontWeight: 700, fontSize: 104, lineHeight: 1.05, letterSpacing: '0.3em', marginTop: 4, marginRight: '-0.3em'}}
+              letterStyle={() => ({color: 'transparent', WebkitTextStroke: `2.5px ${C.pink}`, filter: `drop-shadow(0 0 12px ${C.magenta})`})}
+            />
+            <div style={{display: 'flex', alignItems: 'center', gap: 22, marginTop: 30, opacity: ramp(f, 44, 56)}}>
+              <div style={{width: ramp(f, 44, 64, 0, 140), height: 2, background: C.pink}} />
               <div
                 style={{
                   padding: '10px 26px',
                   borderRadius: 100,
                   border: `2px solid ${C.green}`,
                   fontFamily: FONT.mono,
-                  fontSize: 20,
-                  letterSpacing: 4,
+                  fontSize: 22,
+                  letterSpacing: 5,
                   color: C.green,
                   display: 'flex',
                   alignItems: 'center',
@@ -199,39 +239,9 @@ const Title: React.FC = () => {
                 }}
               >
                 <span style={{width: 10, height: 10, borderRadius: 10, background: C.green, display: 'inline-block', boxShadow: `0 0 10px ${C.green}`}} />
-                SHOWREEL 2026
+                BY {NAME}
               </div>
-            </div>
-            <RiseText
-              text="MOTION"
-              start={4}
-              stagger={3}
-              style={{fontFamily: FONT.display, fontWeight: 900, fontSize: 230, lineHeight: 1, letterSpacing: '0.02em'}}
-              letterStyle={(i) => ({
-                color: gradAt(i / 5),
-                textShadow: `0 0 50px ${C.magenta}99`,
-              })}
-            />
-            <RiseText
-              text="COLLECTION"
-              start={18}
-              stagger={2}
-              style={{
-                fontFamily: FONT.display,
-                fontWeight: 700,
-                fontSize: 104,
-                lineHeight: 1.05,
-                letterSpacing: '0.12em',
-                marginTop: 6,
-              }}
-              letterStyle={() => ({color: 'transparent', WebkitTextStroke: `2.5px ${C.pink}`, filter: `drop-shadow(0 0 12px ${C.magenta})`})}
-            />
-            <div style={{display: 'flex', alignItems: 'center', gap: 22, marginTop: 34, opacity: ramp(f, 50, 62)}}>
-              <div style={{width: ramp(f, 50, 70, 0, 160), height: 2, background: C.pink}} />
-              <Mono size={22} color={C.white}>
-                selected works · 01 — 08
-              </Mono>
-              <div style={{width: ramp(f, 50, 70, 0, 160), height: 2, background: C.pink}} />
+              <div style={{width: ramp(f, 44, 64, 0, 140), height: 2, background: C.pink}} />
             </div>
           </div>
         </AbsoluteFill>

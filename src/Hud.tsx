@@ -1,22 +1,24 @@
 import React from 'react';
 import {AbsoluteFill, useCurrentFrame} from 'remotion';
-import {C, FONT, pad2, T, WORKS} from './theme';
+import {C, FONT, NAME, pad2, T, WORKS} from './theme';
+import {Logo} from './Logo';
 import {Mono, ramp} from './fx';
 
 /** Persistent UI chrome: brand, chapter dots and a running timecode. */
 export const Hud: React.FC = () => {
   const f = useCurrentFrame(); // absolute frame
-  const o = ramp(f, T.wall, T.wall + 15) * (1 - ramp(f, T.outro - 10, T.outro));
+  const o = ramp(f, T.rally, T.rally + 15) * (1 - ramp(f, T.cta - 10, T.cta));
   if (o <= 0) return null;
-  const ch = Math.floor((f - T.chapters) / T.chapterLen);
+  const ch = Math.floor((f - T.works) / T.workLen);
+  const inWorks = f >= T.works && f < T.lesson;
   const sec = Math.floor(f / 30);
   const tc = `${pad2(Math.floor(sec / 60))}:${pad2(sec % 60)}:${pad2(f % 30)}`;
   return (
     <AbsoluteFill style={{opacity: o, pointerEvents: 'none'}}>
       <div style={{position: 'absolute', top: 34, left: 48, display: 'flex', alignItems: 'center', gap: 12}}>
-        <div style={{width: 14, height: 14, transform: 'rotate(45deg)', border: `2px solid ${C.pink}`}} />
+        <Logo size={20} glow={0.3} />
         <Mono size={14} color={C.white} style={{textShadow: '0 1px 6px #000'}}>
-          motion collection ©2026
+          {`${NAME} × genlayer`}
         </Mono>
       </div>
       <div style={{position: 'absolute', top: 34, right: 48, display: 'flex', alignItems: 'center', gap: 12}}>
@@ -25,10 +27,10 @@ export const Hud: React.FC = () => {
           {`rec ${tc}`}
         </Mono>
       </div>
-      <div style={{position: 'absolute', bottom: 36, left: 0, right: 0, display: 'flex', justifyContent: 'center', gap: 10}}>
+      <div style={{position: 'absolute', bottom: 36, left: 0, right: 0, display: 'flex', justifyContent: 'center', gap: 10, opacity: inWorks ? 1 : 0}}>
         {WORKS.map((_, i) => {
-          const active = i === ch && f >= T.chapters && f < T.finale;
-          const done = f >= T.chapters + (i + 1) * T.chapterLen;
+          const active = i === ch && inWorks;
+          const done = f >= T.works + (i + 1) * T.workLen;
           return (
             <div
               key={i}
@@ -44,7 +46,7 @@ export const Hud: React.FC = () => {
         })}
       </div>
       <div style={{position: 'absolute', bottom: 30, right: 48, fontFamily: FONT.mono, fontSize: 14, color: C.green, letterSpacing: 3}}>
-        {f >= T.chapters && f < T.finale ? `W—${pad2(ch + 1)}` : ''}
+        {inWorks ? `VIDEO ${pad2(ch + 1)}` : ''}
       </div>
     </AbsoluteFill>
   );

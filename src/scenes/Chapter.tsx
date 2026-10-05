@@ -1,10 +1,10 @@
 import React from 'react';
 import {AbsoluteFill, interpolate, OffthreadVideo, spring, staticFile, useCurrentFrame, useVideoConfig, Easing} from 'remotion';
-import {C, FONT, H, pad2, W, Work, WORKS} from '../theme';
+import {C, FONT, H, NAME, pad2, W, Work, WORKS} from '../theme';
 import {beatPulse, Brackets, clamp, Decode, easeInOut, easeOut, Mono, Particles, ramp, RiseText, Backdrop} from '../fx';
 import {gradAt} from './Intro';
 
-const LEN = 180;
+const LEN = 120;
 
 const WordRise: React.FC<{text: string; start: number; style?: React.CSSProperties}> = ({text, start, style}) => {
   const f = useCurrentFrame();
@@ -33,7 +33,7 @@ export const Chapter: React.FC<{i: number; work: Work}> = ({i, work}) => {
   const ch = 664;
   const dockX = left ? 100 : W - 100 - cw;
   const dockY = (H - ch) / 2 + 24;
-  const full = ramp(f, 100, 122, 0, 1, easeInOut);
+  const full = ramp(f, 64, 82, 0, 1, easeInOut);
   const x = interpolate(full, [0, 1], [dockX, 0]);
   const y = interpolate(full, [0, 1], [dockY, 0]);
   const w = interpolate(full, [0, 1], [cw, W]);
@@ -56,12 +56,12 @@ export const Chapter: React.FC<{i: number; work: Work}> = ({i, work}) => {
         return `translateY(${(1 - e) * -380}px) rotateX(${(1 - e) * -35}deg) scale(${0.8 + 0.2 * e})`;
     }
   })();
-  const tilt = (1 - full) * (left ? 1 : -1) * interpolate(f, [0, 100], [9, 4], clamp);
+  const tilt = (1 - full) * (left ? 1 : -1) * interpolate(f, [0, 64], [9, 4], clamp);
   const pulse = beatPulse(f, 5);
 
   // ---- info panel ----
   const infoX = left ? dockX + cw + 60 : 100;
-  const infoOut = ramp(f, 96, 112, 0, 1, Easing.in(Easing.cubic));
+  const infoOut = ramp(f, 60, 72, 0, 1, Easing.in(Easing.cubic));
   const infoShift = (left ? 1 : -1) * infoOut * 120;
   const progress = f / LEN;
 
@@ -105,7 +105,7 @@ export const Chapter: React.FC<{i: number; work: Work}> = ({i, work}) => {
         } as React.CSSProperties}
       >
         <Mono size={14} color={C.pink} style={{transform: 'rotate(-90deg)', opacity: 0.7}}>
-          {`project ${pad2(i + 1)} — ${work.title} — motion collection 2026 —`}
+          {`video ${pad2(i + 1)} — ${work.title} — ${NAME} × genlayer —`}
         </Mono>
       </div>
 
@@ -144,7 +144,7 @@ export const Chapter: React.FC<{i: number; work: Work}> = ({i, work}) => {
           }}
         >
           <div style={{width: '100%', height: '100%', borderRadius: Math.max(0, radius - 3), overflow: 'hidden', position: 'relative', background: '#000'}}>
-            <OffthreadVideo muted src={staticFile(`clips/${work.src}.mp4`)} style={{width: '100%', height: '100%', objectFit: 'cover'}} />
+            <OffthreadVideo muted src={staticFile(`clips/${work.src}.mp4`)} trimBefore={work.trim} style={{width: '100%', height: '100%', objectFit: 'cover'}} />
             {/* shine sweep */}
             <div
               style={{
@@ -152,7 +152,7 @@ export const Chapter: React.FC<{i: number; work: Work}> = ({i, work}) => {
                 top: -200,
                 bottom: -200,
                 width: 260,
-                left: interpolate(f, [12, 42], [-400, w + 200], clamp),
+                left: interpolate(f, [8, 34], [-400, w + 200], clamp),
                 background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.22), transparent)',
                 transform: 'rotate(18deg)',
               }}
@@ -170,7 +170,7 @@ export const Chapter: React.FC<{i: number; work: Work}> = ({i, work}) => {
                 display: 'flex',
                 gap: 10,
                 alignItems: 'center',
-                opacity: ramp(f, 16, 24) * (1 - full),
+                opacity: ramp(f, 12, 20) * (1 - full),
               }}
             >
               <span style={{width: 9, height: 9, borderRadius: 9, background: C.green, boxShadow: `0 0 10px ${C.green}`, opacity: f % 30 < 18 ? 1 : 0.25}} />
@@ -193,13 +193,13 @@ export const Chapter: React.FC<{i: number; work: Work}> = ({i, work}) => {
       >
         <div style={{display: 'flex', alignItems: 'center', gap: 14, opacity: ramp(f, 8, 16)}}>
           <span style={{width: 10, height: 10, borderRadius: 10, background: C.green, boxShadow: `0 0 12px ${C.green}`}} />
-          <Mono size={18} color={C.green}>project</Mono>
+          <Mono size={18} color={C.green}>{i === 0 ? 'then came video' : 'video'}</Mono>
           <div style={{height: 2, background: `${C.green}88`, width: ramp(f, 10, 30, 0, 240)}} />
         </div>
         <div style={{display: 'flex', alignItems: 'flex-end', gap: 16, marginTop: 6}}>
           <RiseText
             text={pad2(i + 1)}
-            start={8}
+            start={6}
             stagger={4}
             style={{fontFamily: FONT.display, fontWeight: 900, fontSize: 190, lineHeight: 1}}
             letterStyle={(k) => ({color: gradAt(0.2 + k * 0.5), textShadow: `0 0 ${30 + pulse * 25}px ${C.magenta}aa`})}
@@ -210,18 +210,18 @@ export const Chapter: React.FC<{i: number; work: Work}> = ({i, work}) => {
         </div>
         <WordRise
           text={work.title}
-          start={18}
+          start={12}
           style={{fontFamily: FONT.display, fontWeight: 700, fontSize: 48, lineHeight: 1.14, color: C.white, marginTop: 8}}
         />
         <Decode
           text={`// ${work.subtitle}`}
-          start={30}
-          dur={16}
+          start={20}
+          dur={14}
           style={{fontFamily: FONT.mono, fontSize: 21, color: C.pink, marginTop: 20, letterSpacing: 1}}
         />
         <div style={{display: 'flex', gap: 12, flexWrap: 'wrap', marginTop: 28}}>
           {work.tags.map((t, k) => {
-            const s = spring({frame: f - 38 - k * 4, fps, config: {damping: 12, stiffness: 160}});
+            const s = spring({frame: f - 26 - k * 3, fps, config: {damping: 12, stiffness: 160}});
             return (
               <div
                 key={t}
@@ -245,13 +245,13 @@ export const Chapter: React.FC<{i: number; work: Work}> = ({i, work}) => {
           })}
         </div>
         {/* progress */}
-        <div style={{marginTop: 46, opacity: ramp(f, 44, 54)}}>
+        <div style={{marginTop: 46, opacity: ramp(f, 30, 40)}}>
           <div style={{display: 'flex', justifyContent: 'space-between', marginBottom: 10}}>
             <Mono size={14} color={C.white} style={{opacity: 0.7}}>
               runtime
             </Mono>
             <Mono size={14} color={C.white} style={{opacity: 0.7}}>
-              {`00:0${Math.floor(f / 30)}:${pad2(f % 30)}`}
+              {`00:0${Math.floor(f / 30)}:${pad2(f % 30)} / 00:04:00`}
             </Mono>
           </div>
           <div style={{height: 4, background: 'rgba(255,255,255,0.12)', borderRadius: 4, overflow: 'hidden'}}>
@@ -262,13 +262,13 @@ export const Chapter: React.FC<{i: number; work: Work}> = ({i, work}) => {
 
       {/* ---------- fullscreen overlay: lower third ---------- */}
       {full > 0 ? <LowerThird i={i} work={work} f={f} /> : null}
-      <Brackets x={60} y={60} w={W - 120} h={H - 120} len={50} color={C.pink} opacity={ramp(f, 118, 128) * 0.9} />
+      <Brackets x={60} y={60} w={W - 120} h={H - 120} len={50} color={C.pink} opacity={ramp(f, 80, 90) * 0.9} />
     </AbsoluteFill>
   );
 };
 
 const LowerThird: React.FC<{i: number; work: Work; f: number}> = ({i, work, f}) => {
-  const p = ramp(f, 118, 134, 0, 1, easeOut);
+  const p = ramp(f, 78, 92, 0, 1, easeOut);
   return (
     <div style={{position: 'absolute', left: 90, bottom: 96, display: 'flex', alignItems: 'stretch', overflow: 'hidden'}}>
       <div
@@ -291,7 +291,7 @@ const LowerThird: React.FC<{i: number; work: Work; f: number}> = ({i, work, f}) 
           background: 'rgba(7,2,13,0.82)',
           borderTop: `3px solid ${C.green}`,
           padding: '12px 28px',
-          clipPath: `inset(0 ${(1 - ramp(f, 122, 140, 0, 1, easeOut)) * 100}% 0 0)`,
+          clipPath: `inset(0 ${(1 - ramp(f, 82, 98, 0, 1, easeOut)) * 100}% 0 0)`,
         }}
       >
         <div style={{fontFamily: FONT.display, fontWeight: 700, fontSize: 30, color: C.white, whiteSpace: 'nowrap'}}>{work.title}</div>

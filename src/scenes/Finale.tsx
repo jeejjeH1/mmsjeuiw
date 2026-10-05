@@ -94,28 +94,28 @@ export const Finale: React.FC = () => {
       <RGBSplit amount={f >= 120 && f < 123 ? 12 : 0}>
         <div style={{position: 'absolute', top: 120, width: W, display: 'flex', flexDirection: 'column', alignItems: 'center', opacity: 1 - titleOut}}>
           <Mono size={22} color={C.green} style={{opacity: ramp(f, 30, 40)}}>
-            {'— the collection —'}
+            {'— one campaign · eight videos later —'}
           </Mono>
-          <div style={{display: 'flex', gap: 40, marginTop: 14}}>
+          <div style={{display: 'flex', gap: 34, marginTop: 18}}>
             <RiseText
-              text="ONE"
+              text="CURIOSITY"
               start={36}
-              stagger={3}
-              style={{fontFamily: FONT.display, fontWeight: 900, fontSize: 140, lineHeight: 1}}
-              letterStyle={() => ({color: C.white, textShadow: `0 0 30px ${C.pink}`})}
+              stagger={2}
+              style={{fontFamily: FONT.display, fontWeight: 900, fontSize: 82, lineHeight: 1}}
+              letterStyle={(i) => ({color: gradAt(i / 8), textShadow: `0 0 40px ${C.magenta}`})}
             />
             <RiseText
-              text="VISION"
-              start={44}
-              stagger={3}
-              style={{fontFamily: FONT.display, fontWeight: 900, fontSize: 140, lineHeight: 1}}
-              letterStyle={(i) => ({color: gradAt(i / 5), textShadow: `0 0 40px ${C.magenta}`})}
+              text="DID THE REST."
+              start={50}
+              stagger={2}
+              style={{fontFamily: FONT.display, fontWeight: 900, fontSize: 82, lineHeight: 1}}
+              letterStyle={() => ({color: C.white, textShadow: `0 0 30px ${C.pink}`})}
             />
           </div>
         </div>
       </RGBSplit>
       <Mono size={18} color={C.white} style={{position: 'absolute', bottom: 120, width: W, textAlign: 'center', opacity: ramp(f, 70, 84) * (1 - titleOut) * 0.85}}>
-        {`8 projects · kinetic type · ui motion · character · explainers`}
+        {`rally  /  read  /  discord  /  art  /  video`}
       </Mono>
       <Flash at={0} len={12} color={C.white} max={0.9} />
       <Flash at={226} len={14} color={C.white} />
