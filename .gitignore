@@ -1,0 +1,5 @@
+node_modules/
+source/
+public/clips/
+public/music.wav
+out/*.jpg
